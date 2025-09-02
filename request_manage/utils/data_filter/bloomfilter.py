@@ -16,22 +16,23 @@ try:
 except ImportError:
     # 如果配置文件不存在，使用默认配置
     class DefaultConfig:
-        REDIS_HOST = '127.0.0.1'
-        REDIS_PORT = 6379
-        REDIS_DB = 0
-        REDIS_PASSWORD = None
-        REDIS_KEY = 'bloom_filter'
-        REDIS_DECODE_RESPONSES = True
-        LOG_LEVEL = 'INFO'  # 添加缺失的LOG_LEVEL
+        REDIS_BLOOM_HOST = '127.0.0.1'
+        REDIS_BLOOM_PORT = 6380 # 使用专用端口
+        REDIS_BLOOM_DB = 0
+        REDIS_BLOOM_PASSWORD = '12345678' # 更新默认密码
+        REDIS_BLOOM_KEY = 'bloom_filter'
+        REDIS_BLOOM_DECODE_RESPONSES = True
+        LOG_LEVEL = 'INFO'
 
         @classmethod
-        def get_redis_config(cls) -> dict:
+        def get_redis_bloom_config(cls) -> dict:
             return {
-                'host': cls.REDIS_HOST,
-                'port': cls.REDIS_PORT,
-                'db': cls.REDIS_DB,
-                'password': cls.REDIS_PASSWORD,
-                'decode_responses': cls.REDIS_DECODE_RESPONSES
+                'host': cls.REDIS_BLOOM_HOST,
+                'port': cls.REDIS_BLOOM_PORT,
+                'db': cls.REDIS_BLOOM_DB,
+                'password': cls.REDIS_BLOOM_PASSWORD,
+                'decode_responses': cls.REDIS_BLOOM_DECODE_RESPONSES,
+                'redis_key': cls.REDIS_BLOOM_KEY
             }
 
     config = DefaultConfig()
@@ -110,12 +111,12 @@ class BloomFilter(object):
         :param redis_decode_responses: 是否自动解码响应，如果为None则使用配置文件中的设置
         :param hash_salts: 哈希盐值列表，如果为None则使用默认值
         """
-        # 使用参数值或配置文件中的默认值
-        redis_config = config.get_redis_config()
+        # 使用布隆过滤器专用的Redis配置
+        redis_config = config.get_redis_bloom_config()
         self.redis_host = redis_host or redis_config['host']
         self.redis_port = redis_port or redis_config['port']
         self.redis_db = redis_db or redis_config['db']
-        self.redis_key = redis_key or redis_config.get('redis_key', 'bloom_filter')
+        self.redis_key = redis_key or redis_config['redis_key']
         self.redis_password = redis_password or redis_config['password']
         self.redis_decode_responses = redis_decode_responses if redis_decode_responses is not None else redis_config['decode_responses']
         

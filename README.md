@@ -696,3 +696,66 @@ print(f"新增: {len(new_items)} 条")
 ---
 
 **感谢使用数据去重过滤器项目！** 🚀
+
+## redis_queue 队列模块（配置与用法）  # 新增
+
+- 位置：`redis_queue/`  # 目录
+- 配置：`redis_queue/config.py`  # 统一配置
+- 工厂：`redis_queue.get_redis_queue_cls(queue_type)`  # 获取类
+- 支持类型：`fifo`、`lifo`、`priority`  # 队列种类
+
+### 配置文件
+
+```python
+# redis_queue/config.py  # 关键项
+CONFIG={
+    'host':'localhost','port':6379,'db':0,'password':1234567,'decode_responses':True,
+    'cluster_nodes':None,  # [{'host':'10.0.0.1','port':6379}, ...]
+    'queue_name_default':'redis_queue','priority_queue_name':'priority_redis_queue',
+    'use_lock':True,'lock_name':'redis_queue_lock','lock_ttl':5,
+}
+```
+
+- 覆盖方式：实例化时传参优先级最高，未传则读取 `CONFIG`  # 优先级
+
+### 使用示例
+
+```python
+from redis_queue import get_redis_queue_cls
+
+# FIFO 队列（左出右入）
+fifo = get_redis_queue_cls('fifo')(name='fifo_q')
+fifo.put({'k':1})
+print(fifo.get())
+
+# LIFO 队列（栈）
+lifo = get_redis_queue_cls('lifo')(name='lifo_q')
+lifo.put({'k':1})
+print(lifo.get())
+
+# Priority 队列（zset，权重越大越先出）
+pq = get_redis_queue_cls('priority')()
+pq.put({'taskA':10,'taskB':20})
+print(pq.get())  # 返回列表，成员值在 [0]
+```
+
+### 集群模式
+
+```python
+from redis_queue import get_redis_queue_cls
+from redis_queue.config import CONFIG
+
+CONFIG['cluster_nodes']=[{'host':'10.0.0.1','port':6379},{'host':'10.0.0.2','port':6379}]  # 开启集群
+pq = get_redis_queue_cls('priority')()  # 自动走 RedisCluster
+```
+
+### 分布式锁（仅 priority 队列可选）
+
+- 开关：`CONFIG['use_lock']=True/False`  # 是否使用锁
+- 锁名/TTL：`CONFIG['lock_name']`，`CONFIG['lock_ttl']`  # 参数
+
+### 注意事项
+
+- `priority` 的 `get()` 返回列表，如需直接值：`pq.get()[0]`  # 返回值
+- 默认 `password=1234567`，如果无密码请置为 `None` 或实例化传参覆盖  # 认证
+- `__init__.py` 的队列映射：`fifo/lifo/priority`，不要使用旧的 `fifo_queue`  # 映射

@@ -20,7 +20,7 @@ except ImportError:
         REDIS_HOST = '127.0.0.1'
         REDIS_PORT = 6379
         REDIS_DB = 0
-        REDIS_PASSWORD = None
+        REDIS_PASSWORD = '1234567' # 更新默认密码
         REDIS_KEY = 'filter'
         REDIS_DECODE_RESPONSES = True
         
@@ -31,7 +31,8 @@ except ImportError:
                 'port': cls.REDIS_PORT,
                 'db': cls.REDIS_DB,
                 'password': cls.REDIS_PASSWORD,
-                'decode_responses': cls.REDIS_DECODE_RESPONSES
+                'decode_responses': cls.REDIS_DECODE_RESPONSES,
+                'redis_key': cls.REDIS_KEY # 添加缺失的redis_key
             }
     
     config = DefaultConfig()
@@ -64,7 +65,7 @@ class RedisFilter(BaseFilter):
         self.redis_host = redis_host or redis_config['host']
         self.redis_port = redis_port or redis_config['port']
         self.redis_db = redis_db or redis_config['db']
-        self.redis_key = redis_key or redis_config.get('redis_key', 'filter')
+        self.redis_key = redis_key or redis_config['redis_key']
         self.redis_password = redis_password or redis_config['password']
         self.redis_decode_responses = redis_decode_responses if redis_decode_responses is not None else redis_config['decode_responses']
         
