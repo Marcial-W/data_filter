@@ -17,31 +17,52 @@
 
 ```
 data_process/
-├── data_filter/           # 核心过滤器模块
-│   ├── __init__.py       # 基础过滤器类
-│   ├── memory_filter.py  # 内存过滤器
-│   ├── redis_filter.py   # Redis过滤器
-│   ├── mysql_filter.py   # MySQL过滤器
-│   └── bloomfilter.py    # 布隆过滤器
-├── demo/                  # 演示文件
-│   ├── test_redis_filter_demo.py    # Redis过滤器演示
-│   ├── test_memory_filter_demo.py   # 内存过滤器演示
-│   ├── test_mysql_filter_demo.py    # MySQL过滤器演示
-│   └── test_bloom_filter_demo.py    # 布隆过滤器演示
-├── test/                  # 测试文件
-│   ├── test_redis_filter.py         # Redis过滤器测试
-│   ├── test_mysql_filter.py         # MySQL过滤器测试
-│   ├── test_bloom_filter.py         # 布隆过滤器测试
-│   └── test_request_filter_integration.py  # 请求过滤器集成测试
-├── config.py             # 配置文件
-├── requirements.txt      # 项目依赖
-├── env_example.txt       # 环境变量配置示例
-├── README.md             # 项目说明文档
-└── docker_config/        # Docker配置
-    ├── docker-compose.yaml
-    ├── Dockerfile
-    ├── mysql_data/
-    └── redis_data/
+├── demo/                      # 演示文件
+│   ├── test_bloom_filter_demo.py
+│   ├── test_memory_filter_demo.py
+│   ├── test_mysql_filter_demo.py
+│   ├── test_redis_filter_demo.py
+│   └── test_redis_queue_demo.py      # 新增：redis 队列演示
+├── docker_config/             # Docker配置
+│   ├── docker-compose.yaml
+│   ├── Dockerfile
+│   ├── mysql_data/
+│   ├── redis_data/
+│   └── redis_bloomfilter_data/
+├── redis_queue/               # Redis 队列模块
+│   ├── __init__.py
+│   ├── base.py
+│   ├── fifo_redis_queue.py
+│   ├── lifo_redis_queue.py
+│   ├── priority_redis_queue.py
+│   ├── redis_distributed_lock.py
+│   └── config.py              # 新增：统一配置
+├── request_manage/
+│   ├── __init__.py
+│   ├── request.py
+│   ├── request_filter/
+│   │   └── __init__.py
+│   └── utils/
+│       ├── __init__.py
+│       ├── config.py
+│       └── data_filter/
+│           ├── __init__.py
+│           ├── bloomfilter.py
+│           ├── memory_filter.py
+│           ├── mysql_filter.py
+│           └── redis_filter.py
+├── test/                      # 测试文件
+│   ├── test_bloom_filter.py
+│   ├── test_final_verification.py
+│   ├── test_improvements.py
+│   ├── test_mysql_filter.py
+│   ├── test_password_diagnosis.py
+│   ├── test_redis_connection.py
+│   ├── test_redis_filter.py
+│   ├── test_redis_queue_priority.py   # 新增：redis 优先队列测试
+│   └── test_request_filter_integration.py
+├── requirements.txt
+└── README.md
 ```
 
 ## 安装依赖
@@ -362,6 +383,9 @@ python test/test_request_filter_integration.py
 
 # 改进功能测试
 python test/test_improvements.py
+
+# Redis 队列（优先队列）测试  # 新增
+python test/test_redis_queue_priority.py
 ```
 
 ### 测试文件说明
@@ -388,6 +412,9 @@ python demo/test_mysql_filter_demo.py
 
 # 布隆过滤器演示
 python demo/test_bloom_filter_demo.py
+
+# Redis 队列演示  # 新增
+python demo/test_redis_queue_demo.py
 ```
 
 ### 批量运行所有演示
