@@ -11,7 +11,7 @@ class Request:
     """HTTP请求对象，支持URL、方法、查询参数、请求头和请求体"""
     
     def __init__(self, url: str, method: str = 'GET', query: Dict[str, Any] = None, 
-                 headers: Dict[str, Any] = None, body: Dict[str, Any] = None):
+                 headers: Dict[str, Any] = None, body: Dict[str, Any] = None, name: str = None):
         self._url = url
         self._method = method.upper()
         self._query = query or {}

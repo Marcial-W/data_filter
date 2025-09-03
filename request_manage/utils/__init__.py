@@ -44,7 +44,7 @@ def get_filter_class(class_name: str) -> Type:
         elif class_name == 'bloom':
             _filter_cache[class_name] = BloomFilter
         else:
-            raise ValueError(f"不支持的过滤器类型: {class_name}")
+            raise ValueError(f"不支持的过滤器类型: {class_name},支持的过滤器为[redis,mysql,bloom,memory]")
         
         return _filter_cache[class_name]
         

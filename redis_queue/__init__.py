@@ -18,7 +18,7 @@ def get_redis_queue_cls(queue_type):
     elif queue_type == 'lifo':
         return LifoRedisQueue
     else:
-        raise ValueError('Invalid queue type: {}'.format(queue_type))
+        raise ValueError('Invalid queue type: {}'.format(queue_type),"支持的队列名称为[priority,fifo,lifo]")
 
 def get_redis_lock_cls():
     return RedisDistributedLock

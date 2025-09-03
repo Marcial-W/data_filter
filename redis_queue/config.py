@@ -6,7 +6,7 @@ CONFIG={
     'port':6379,
     'db':0,
     'password':1234567,
-    'decode_responses':True,
+    'decode_responses':False,
     'cluster_nodes':None,
     'queue_name_default':'redis_queue',
     'priority_queue_name':'priority_redis_queue',
